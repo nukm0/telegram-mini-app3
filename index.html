@@ -310,4 +310,43 @@
             
             <div class="my-ads-list" id="my-ads-list">
                 <!-- Мои объявления загружаются через JS -->
-            </
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="modal-overlay" class="modal-overlay hidden"></div>
+    
+    <!-- Модалка успешной публикации -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Объявление опубликовано!</h3>
+            <p>Ваш товар теперь видят все пользователи.</p>
+            <button id="success-ok-btn" class="primary-btn">Понятно</button>
+        </div>
+    </div>
+    
+    <!-- Модалка загрузки фото -->
+    <div id="photo-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Добавить фото</h3>
+            <div class="modal-options">
+                <button id="gallery-btn" class="photo-option-btn">
+                    <i class="fas fa-images"></i>
+                    <span>Галерея</span>
+                </button>
+                <button id="camera-btn" class="photo-option-btn">
+                    <i class="fas fa-camera"></i>
+                    <span>Камера</span>
+                </button>
+            </div>
+            <button class="secondary-btn" id="close-photo-modal">Отмена</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
