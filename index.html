@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vape Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Загрузчик -->
+        <div id="loader" class="loader">
+            <div class="loader-content">
+                <div class="spinner"></div>
+                <p>Загрузка магазина...</p>
+            </div>
+        </div>
+
+        <!-- Главный экран -->
+        <div id="main-screen" class="screen hidden">
+            <!-- Шапка -->
+            <header class="header">
+                <div class="logo">
+                    <i class="fas fa-smoking"></i>
+                    <h1>Vape Market</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="profile-btn" class="icon-btn">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button id="favorites-btn" class="icon-btn">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Поиск -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Поиск товаров...">
+                </div>
+            </div>
+
+            <!-- Категории -->
+            <div class="categories">
+                <h2>Категории</h2>
+                <div class="category-list" id="category-list">
+                    <!-- Категории загружаются через JS -->
+                </div>
+            </div>
+
+            <!-- Объявления -->
+            <div class="ads-section">
+                <div class="section-header">
+                    <h2>Последние объявления</h2>
+                    <button id="create-ad-btn" class="primary-btn">
+                        <i class="fas fa-plus"></i> Создать
+                    </button>
+                </div>
+                <div class="ads-grid" id="ads-grid">
+                    <!-- Объявления загружаются через JS -->
+                </div>
+                <div class="load-more">
+                    <button id="load-more-btn" class="secondary-btn">
+                        Показать еще
+                    </button>
+                </div>
+            </div>
+
+            <!-- Навигация -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-screen="main">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </button>
+                <button class="nav-btn" data-screen="categories">
+                    <i class="fas fa-th-large"></i>
+                    <span>Категории</span>
+                </button>
+                <button class="nav-btn" data-screen="create">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Создать</span>
+                </button>
+                <button class="nav-btn" data-screen="favorites">
+                    <i class="fas fa-heart"></i>
+                    <span>Избранное</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Экран категорий -->
+        <div id="categories-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="main">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Все категории</h2>
+            </div>
+            <div class="categories-full" id="categories-full">
+                <!-- Все категории загружаются через JS -->
+            </div>
+        </div>
+
+        <!-- Экран создания объявления -->
+        <div id="create-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="main">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Новое объявление</h2>
+            </div>
+            
+            <div class="create-form">
+                <!-- Фото -->
+                <div class="form-section">
+                    <label>Фотографии товара (до 5 шт)</label>
+                    <div class="photos-upload">
+                        <div class="photo-upload-btn" id="upload-photo-btn">
+                            <i class="fas fa-camera"></i>
+                            <span>Добавить фото</span>
+                        </div>
+                        <div class="photos-preview" id="photos-preview">
+                            <!-- Преview загруженных фото -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Основная информация -->
+                <div class="form-section">
+                    <label for="ad-title">Название товара *</label>
+                    <input type="text" id="ad-title" placeholder="Например: GeekVape Aegis Legend 2" maxlength="100">
+                    
+                    <label for="ad-category">Категория *</label>
+                    <select id="ad-category">
+                        <option value="">Выберите категорию</option>
+                        <option value="расходники">🔄 Расходники</option>
+                        <option value="жидкость">💧 Жидкость</option>
+                        <option value="одноразки">🚬 Одноразовые</option>
+                        <option value="подсистемы">🔋 Под системы</option>
+                        <option value="другое">📦 Другое</option>
+                    </select>
+                    
+                    <label for="ad-price">Цена (₽) *</label>
+                    <input type="number" id="ad-price" placeholder="0" min="0" step="100">
+                    
+                    <label for="ad-location">Местоположение</label>
+                    <input type="text" id="ad-location" placeholder="Город или район">
+                </div>
+
+                <!-- Описание -->
+                <div class="form-section">
+                    <label for="ad-description">Описание товара</label>
+                    <textarea id="ad-description" placeholder="Опишите товар подробно..." rows="4"></textarea>
+                    <div class="char-counter">
+                        <span id="char-count">0</span>/500
+                    </div>
+                </div>
+
+                <!-- Контакты -->
+                <div class="form-section">
+                    <label>Способ связи *</label>
+                    <div class="contact-options">
+                        <label class="radio-option">
+                            <input type="radio" name="contact" value="telegram" checked>
+                            <i class="fab fa-telegram"></i>
+                            <span>Telegram</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="contact" value="phone">
+                            <i class="fas fa-phone"></i>
+                            <span>Телефон</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Кнопка публикации -->
+                <div class="form-actions">
+                    <button id="publish-btn" class="primary-btn large-btn">
+                        <i class="fas fa-paper-plane"></i> Опубликовать
+                    </button>
+                    <p class="form-note">
+                        Нажимая "Опубликовать", вы соглашаетесь с правилами размещения объявлений
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран объявления -->
+        <div id="ad-detail-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="main">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 id="ad-detail-title"></h2>
+                <button id="ad-favorite-btn" class="icon-btn">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+            
+            <div class="ad-detail-content">
+                <!-- Галерея фото -->
+                <div class="ad-gallery" id="ad-gallery">
+                    <!-- Фото загружаются через JS -->
+                </div>
+                
+                <!-- Информация -->
+                <div class="ad-info">
+                    <div class="ad-price" id="ad-price-detail"></div>
+                    <div class="ad-meta">
+                        <span class="ad-category" id="ad-category-detail"></span>
+                        <span class="ad-views" id="ad-views"></span>
+                        <span class="ad-date" id="ad-date"></span>
+                    </div>
+                    
+                    <div class="ad-description" id="ad-description-detail"></div>
+                    
+                    <div class="ad-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="ad-location-detail"></span>
+                    </div>
+                </div>
+                
+                <!-- Продавец -->
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="seller-details">
+                            <h4 id="seller-name"></h4>
+                            <p id="seller-joined"></p>
+                        </div>
+                    </div>
+                    <button id="contact-seller-btn" class="primary-btn">
+                        <i class="fab fa-telegram"></i> Написать продавцу
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран профиля -->
+        <div id="profile-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="main">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Мой профиль</h2>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="profile-name"></h3>
+                        <p id="profile-username"></p>
+                    </div>
+                </div>
+                
+                <div class="profile-stats" id="profile-stats">
+                    <!-- Статистика загружается через JS -->
+                </div>
+                
+                <div class="profile-actions">
+                    <button id="my-ads-btn" class="profile-action-btn">
+                        <i class="fas fa-list"></i>
+                        <span>Мои объявления</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button id="settings-btn" class="profile-action-btn">
+                        <i class="fas fa-cog"></i>
+                        <span>Настройки</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button id="help-btn" class="profile-action-btn">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Помощь</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран избранного -->
+        <div id="favorites-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="main">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Избранное</h2>
+            </div>
+            
+            <div class="favorites-list" id="favorites-list">
+                <!-- Избранные объявления загружаются через JS -->
+            </div>
+        </div>
+
+        <!-- Экран моих объявлений -->
+        <div id="my-ads-screen" class="screen hidden">
+            <div class="screen-header">
+                <button class="back-btn" data-back="profile">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Мои объявления</h2>
+            </div>
+            
+            <div class="my-ads-list" id="my-ads-list">
+                <!-- Мои объявления загружаются через JS -->
+            </
